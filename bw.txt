@@ -1,0 +1,43 @@
+What is Blocks World Problem?
+This is how the problem goes — There is a table on which some blocks are placed. Some blocks may or may not be stacked on other blocks. We have a robot arm to pick up or put down the blocks. The robot arm can move only one block at a time, and no other block should be stacked on top of the block which is to be moved by the robot arm.
+
+Our aim is to change the configuration of the blocks from the Initial State to the Goal State, both of which have been specified in the diagram above.
+
+What is Goal Stack Planning?
+Goal Stack Planning is one of the earliest methods in artificial intelligence in which we work backwards from the goal state to the initial state.
+We start at the goal state and we try fulfilling the preconditions required to achieve the initial state. These preconditions in turn have their own set of preconditions, which are required to be satisfied first. We keep solving these “goals” and “sub-goals” until we finally arrive at the Initial State. We make use of a stack to hold these goals that need to be fulfilled as well the actions that we need to perform for the same.
+
+Apart from the “Initial State” and the “Goal State”, we maintain a “World State” configuration as well. Goal Stack uses this world state to work its way from Goal State to Initial State. World State on the other hand starts off as the Initial State and ends up being transformed into the Goal state.
+At the end of this algorithm we are left with an empty stack and a set of actions which helps us navigate from the Initial State to the World State.
+
+Representing the configurations as a list of “predicates”
+Predicates can be thought of as a statement which helps us convey the information about a configuration in Blocks World.
+Given below are the list of predicates as well as their intended meaning
+ON(A,B) : Block A is on B
+ONTABLE(A) : A is on table
+CLEAR(A) : Nothing is on top of A
+HOLDING(A) : Arm is holding A.
+ARMEMPTY : Arm is holding nothing
+Using these predicates, we represent the Initial State and the Goal State in our example like this:
+Initial State — ON(B,A) ∧ ONTABLE(A) ∧ ONTABLE(C) ∧ ONTABLE(D) ∧ CLEAR(B) ∧ CLEAR(C) ∧ CLEAR(D) ∧ ARMEMPTY
+
+Initial State
+Goal State — ON(C,A) ∧ ON(B,D) ∧ ONTABLE(A) ∧ ONTABLE(D) ∧ CLEAR(B) ∧ CLEAR(C) ∧ ARMEMPTY
+
+Goal State
+Thus a configuration can be thought of as a list of predicates describing the current scenario.
+“Operations” performed by the robot arm
+The Robot Arm can perform 4 operations:
+STACK(X,Y) : Stacking Block X on Block Y
+UNSTACK(X,Y) : Picking up Block X which is on top of Block Y
+PICKUP(X) : Picking up Block X which is on top of the table
+PUTDOWN(X) : Put Block X on the table
+All the four operations have certain preconditions which need to be satisfied to perform the same. These preconditions are represented in the form of predicates.
+The effect of these operations is represented using two lists ADD and DELETE. DELETE List contains the predicates which will cease to be true once the operation is performed. ADD List on the other hand contains the predicates which will become true once the operation is performed.
+The Precondition, Add and Delete List for each operation is rather intuitive and have been listed below.
+
+Operations performed by the Robot Arm
+For example, to perform the STACK(X,Y) operation i.e. to Stack Block X on top of Block Y, No other block should be on top of Y (CLEAR(Y)) and the Robot Arm should be holding the Block X (HOLDING(X)).
+Once the operation is performed, these predicates will cease to be true, thus they are included in DELETE List as well. (Note : It is not necessary for the Precondition and DELETE List to be the exact same).
+On the other hand, once the operation is performed, The robot arm will be free (ARMEMPTY) and the block X will be on top of Y (ON(X,Y)).
+The other 3 Operators follow similar logic, and this part is the cornerstone of Goal Stack Planning.
